@@ -2,6 +2,9 @@ import logo from './logo.svg';
 import './App.css';
 import React from 'react';
 import { useState } from 'react';
+import Login from './copmonents/Login';
+import { BrowserRouter, Routes, Route, Navigate, } from 'react-router-dom';
+import Home from './copmonents/Home';
 
 function App() {
   const [data, setData] = useState("");
@@ -30,13 +33,29 @@ function App() {
     }
   }
 
+
+
   return (
-    <div className="App">
-      <button onClick={getTextContent}>here</button>
-      <button onClick={getAllFiles}>files</button>
-      <p>{data}</p>
-      <ul>{files.map((file,index) => <li key={index}>{file.name} {file.isFile ? 'is a file' : 'is a directory '}</li>)}</ul>
-    </div>
+
+    // {/* <button onClick={getTextContent}>here</button>
+    // <button onClick={getAllFiles}>files</button>
+    // <p>{data}</p>
+    // <ul>{files.map((file,index) => <li key={index}>{file.name} {file.isFile ? 'is a file' : 'is a directory '}</li>)}</ul> */}
+    // {/* <Login /> */}
+
+    <BrowserRouter>
+      <Routes >
+        <Route index element={<Navigate replace to="/login" />}></Route>
+        <Route path='/login' element={<Login />}></Route>
+        <Route path="/:username" element={<Home />}>
+        </Route>
+        <Route path='*' element={<h1>error</h1>}></Route>
+      </Routes>
+    </BrowserRouter>
+
+
+
+
   );
 }
 

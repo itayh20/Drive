@@ -4,7 +4,10 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
+const users = require('./usersData.json');
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
+
 
 
 app.use(function (req, res, next) {
@@ -45,5 +48,19 @@ async function getStats(data) {
     }
     return dataArr;
 }
+
+
+app.post('/login', (req, res) => {
+    const user = users.find(
+        u => u.username === req.body.username && u.password === req.body.password
+    );
+    if (user) {
+        res.send(true)
+    } else {
+        res.send(false);
+    };
+});
+
+
 
 app.listen(8000);
