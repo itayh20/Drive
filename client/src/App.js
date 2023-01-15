@@ -5,10 +5,15 @@ import { useState } from 'react';
 import Login from './copmonents/Login';
 import { BrowserRouter, Routes, Route, Navigate, } from 'react-router-dom';
 import Home from './copmonents/Home';
+import { createContext } from 'react';
+import Register from './copmonents/Register';
+
+export const AppContext = createContext();
 
 function App() {
   const [data, setData] = useState("");
   const [files, setFiles] = useState([]);
+  const [user, setUser] = useState(null);
 
   const getTextContent = async () => {
     try {
@@ -42,17 +47,17 @@ function App() {
     // <p>{data}</p>
     // <ul>{files.map((file,index) => <li key={index}>{file.name} {file.isFile ? 'is a file' : 'is a directory '}</li>)}</ul> */}
     // {/* <Login /> */}
-
-    <BrowserRouter>
-      <Routes >
-        <Route index element={<Navigate replace to="/login" />}></Route>
-        <Route path='/login' element={<Login />}></Route>
-        <Route path="/:username" element={<Home />}>
-        </Route>
-        <Route path='*' element={<h1>error</h1>}></Route>
-      </Routes>
-    </BrowserRouter>
-
+    <AppContext.Provider value={{ user,setUser }}>
+      <BrowserRouter>
+        <Routes >
+          <Route index element={<Navigate replace to="/login" />}></Route>
+          <Route path='/login' element={<Login />}></Route>
+          <Route path="/:username" element={<Home />}></Route>
+          <Route path='/register' element={<Register />}></Route>
+          <Route path='*' element={<h1>error</h1>}></Route>
+        </Routes>
+      </BrowserRouter>
+    </AppContext.Provider>
 
 
 

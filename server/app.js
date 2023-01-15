@@ -16,21 +16,51 @@ app.use(function (req, res, next) {
     next()
 });
 
-app.get('/api', (req, res) => {
-    fs.readFile('../files/bla.txt', 'utf-8', (err, data) => {
+// app.get('/api', (req, res) => {
+//     fs.readFile('../files/bla.txt', 'utf-8', (err, data) => {
+//         if (err) {
+//             console.log(err);
+//         } else {
+//             res.send(data)
+//         }
+//     })
+// });
+
+// Add user and make him a dir
+app.post('/api/users', (req, res) => {
+    const body = JSON.stringify(req.body);
+    const newUser = JSON.parse(body);
+    newUser.id = users.length + 1;
+    newUser.path = `../${newUser.id}`;
+    users.push(newUser);
+    console.log('hiiiiiii');
+    fs.writeFile('./usersData.json', JSON.stringify(users), (err) => {
         if (err) {
             console.log(err);
-        } else {
-            res.send(data)
         }
-    })
+    });
+    const id = newUser.id;
+    fs.mkdir(`../${id}`, (err) => {
+        if (err) {
+            console.log(err);
+        }
+    });
+    res.send();
 });
 
-app.get('/api/files', (req, res) => {
-    fs.readdir('../files', (err, data) => {
+// Get the users files
+app.get('/api/:username/files', (req, res) => {
+    let username = req.params.username;
+    for (let i = 0; i < users.length; i++) {
+        if (users[i].username === username) {
+            var id = users[i].id;
+        }
+    }
+    fs.readdir(`../${id}`, (err, data) => {
         if (err) {
             res.status(500).send(err);
         } else {
+            console.log(data.toString());
             getStats(data)
                 .then((dataArr) => {
                     res.send(dataArr);
@@ -39,7 +69,7 @@ app.get('/api/files', (req, res) => {
     });
 });
 
-
+//Get stats of a file
 async function getStats(data) {
     let dataArr = [];
     for (let i = 0; i < data.length; i++) {
@@ -49,16 +79,32 @@ async function getStats(data) {
     return dataArr;
 }
 
-
+// Check if user can log in
 app.post('/login', (req, res) => {
     const user = users.find(
         u => u.username === req.body.username && u.password === req.body.password
     );
-    if (user) {
-        res.send(true)
-    } else {
-        res.send(false);
-    };
+    res.send(user);
+    // if (user) {
+    //     res.send(true)
+    // } else {
+    //     res.send(false);
+    // };
+});
+
+// Create new folder
+app.post('/api/:username/files/:folderName', (req, res) => {
+    const folder = req.params.folderName;
+    for (let i = 0; i < users.length; i++) {
+        if (users[i].username === req.body.username && users[i].password === req.body.password) {
+            var id = users[i].id;
+        }
+    }
+    fs.mkdir(`../${id}/${folder}`, (err) => {
+        if (err) {
+            console.log(err);
+        }
+    });
 });
 
 

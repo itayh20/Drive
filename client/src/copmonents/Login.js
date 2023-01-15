@@ -1,10 +1,13 @@
 import React from 'react'
 import { useState } from 'react';
 import App from '../App';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AppContext } from '../App';
 
 function Login() {
-    const [user, setUser] = useState({});
+    const { user, setUser } = useContext(AppContext);
+
     const navigate = useNavigate();
 
     const handleInput = (e) => {
@@ -28,8 +31,6 @@ function Login() {
         else {
             alert('User not found');
         }
-
-
     }
     return (
         <div>
@@ -44,6 +45,7 @@ function Login() {
                 </label>
                 <button type='submit'>div</button>
             </form>
+            <NavLink to='/register'>Register</NavLink>
         </div>
     )
 }
