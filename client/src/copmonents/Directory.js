@@ -1,11 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useContext } from 'react';
 import { AppContext } from '../App';
-
-function File(props) {
+import File from './File';
+function Directory(props) {
     const { user } = useContext(AppContext);
     const [dirFiles, setDirFiles] = useState([]);
     const [showFilesDir, setShowFilesDir] = useState(false);
+
+    // useEffect(() => {
+    //     getFiles();
+    // }, [])
+
+    // const getFiles = async () => {
+    //     const res = await fetch(`http://localhost:8000/api/${user.username}/files`)
+    //     const data = await res.json();
+    //     console.log(data);
+    //     setDirFiles(data)
+    // }
 
     const showFiles = async (name) => {
         if (showFilesDir) {
@@ -17,8 +28,6 @@ function File(props) {
             setShowFilesDir(!showFilesDir);
         }
     }
-
-
     return (
         <div>
             <h1>{props.data.name}</h1>
@@ -34,4 +43,4 @@ function File(props) {
     )
 }
 
-export default File;
+export default Directory

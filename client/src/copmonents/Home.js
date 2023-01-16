@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useContext } from 'react';
 import { AppContext } from '../App';
 import File from './File';
+import Directory from './Directory';
 
 function Home() {
     const [files, setFiles] = useState([]);
@@ -13,7 +14,7 @@ function Home() {
     }, [])
 
     const getFiles = async () => {
-        const res = await fetch(`http://localhost:8000/api/${user.username}/files`)
+        const res = await fetch(`http://localhost:8000/api/${user?.username}/files`)
         const data = await res.json();
         setFiles(data)
     }
@@ -25,6 +26,7 @@ function Home() {
             body: JSON.stringify(user),
             headers: { 'Content-Type': 'application/json' }
         });
+        await getFiles();
     }
 
     return (
@@ -32,7 +34,7 @@ function Home() {
             <h1>Home</h1>
             <p>Hi {user.username}! it's from the pizza</p>
             {/* <ul>{files.map((file, index) => <li key={index}>{file.name} {file.isFile ? 'is a file' : 'is a directory '}</li>)}</ul> */}
-            <ul>{files.map((file, index) => <File key={index} data={file} />)}</ul>
+            <ul>{files.map((file, index) => file.isFile ? <File key={index} data={file} /> : <Directory key={index} data={file} />)}</ul>
             <button onClick={addDir}>Add directory</button>
         </div>
     )
