@@ -142,10 +142,11 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
+const fse = require('fs-extra')
 const users = require('./usersData.json');
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json())
-
+app.use(express.json());
+app.use(cors());
 
 
 app.use(function (req, res, next) {
@@ -154,15 +155,6 @@ app.use(function (req, res, next) {
     next()
 });
 
-// app.get('/api', (req, res) => {
-//     fs.readFile('../files/bla.txt', 'utf-8', (err, data) => {
-//         if (err) {
-//             console.log(err);
-//         } else {
-//             res.send(data)
-//         }
-//     })
-// });
 
 // Add user and make him a dir
 app.post('/api/users', (req, res) => {
@@ -205,13 +197,13 @@ async function getStats(data, username, path) {
         var dataArr = [];
         for (let i = 0; i < data.length; i++) {
             let stat = await fs.promises.stat(`../${username}/${data[i]}`);
-            dataArr.push({ name: data[i], isFile: stat.isFile() });
+            dataArr.push({ name: data[i], isFile: stat.isFile(), fileSize: stat.size });
         }
     } else {
         var dataArr = [];
         for (let i = 0; i < data.length; i++) {
             let stat = await fs.promises.stat(`../${username}/${path}/${data[i]}`);
-            dataArr.push({ name: data[i], isFile: stat.isFile() });
+            dataArr.push({ name: data[i], isFile: stat.isFile(), fileSize: stat.size });
         }
     }
     return dataArr;
@@ -237,7 +229,47 @@ app.post('/api/:username/files/:folderName', (req, res) => {
     });
 });
 
+// Read file
+app.get('/:username/:file', (req, res) => {
+    let username = req.params.username
+    let file = req.params.file
+    fs.readFile(`../${username}/${file}`, 'utf-8', (err, data) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.send(data)
+        }
+    })
+});
 
+// Rename file
+app.put('/:username/:oldName/:newName', (req, res) => {
+    let username = req.params.username
+    let oldName = req.params.oldName
+    let newName = req.params.newName
+    fse.rename(`../${username}/${oldName}`, `../${username}/${newName}`, (err, data) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.send(data)
+        }
+    })
+});
+
+//Delete file
+app.delete('/:username/:file', (req, res) => {
+    let username = req.params.username
+    let file = req.params.file
+    fs.unlink(`../${username}/${file}`, (err, data) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.send(data)
+        }
+    })
+});
+
+// Get specific files in the directory
 app.get('/api/:username/:dirName/get', (req, res) => {
     let username = req.params.username;
     let dirName = req.params.dirName;
@@ -253,5 +285,18 @@ app.get('/api/:username/:dirName/get', (req, res) => {
     });
 });
 
+// Rename the directory
+app.put('/api/:username/:newName/:oldName', (req, res) => {
+    let username = req.params.username;
+    let newName = req.params.newName;
+    let oldName = req.params.oldName;
+    fse.rename(`../${username}/${oldName}`, `../${username}/${newName}`, (err, data) => {
+        if (err) {
+            res.send(err)
+        } else {
+            res.send('hi')
+        }
+    })
+});
 
 app.listen(8000);
