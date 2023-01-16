@@ -60,8 +60,7 @@ app.get('/api/:username/files', (req, res) => {
         if (err) {
             res.status(500).send(err);
         } else {
-            console.log(data.toString());
-            getStats(data)
+            getStats(data,id)
                 .then((dataArr) => {
                     res.send(dataArr);
                 });
@@ -70,10 +69,10 @@ app.get('/api/:username/files', (req, res) => {
 });
 
 //Get stats of a file
-async function getStats(data) {
+async function getStats(data,id) {
     let dataArr = [];
     for (let i = 0; i < data.length; i++) {
-        let stat = await fs.promises.stat(`../files/${data[i]}`);
+        let stat = await fs.promises.stat(`../${id}`);
         dataArr.push({ name: data[i], isFile: stat.isFile() });
     }
     return dataArr;

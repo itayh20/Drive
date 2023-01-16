@@ -2,6 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import { useContext } from 'react';
 import { AppContext } from '../App';
+import File from './File';
 
 function Home() {
     const [files, setFiles] = useState([]);
@@ -30,7 +31,8 @@ function Home() {
         <div>
             <h1>Home</h1>
             <p>Hi {user.username}! it's from the pizza</p>
-            <ul>{files.map((file, index) => <li key={index}>{file.name} {file.isFile ? 'is a file' : 'is a directory '}</li>)}</ul>
+            {/* <ul>{files.map((file, index) => <li key={index}>{file.name} {file.isFile ? 'is a file' : 'is a directory '}</li>)}</ul> */}
+            <ul>{files.map((file, index) => <File key={index} data={file} />)}</ul>
             <button onClick={addDir}>Add directory</button>
         </div>
     )
